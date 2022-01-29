@@ -1,107 +1,144 @@
-// Get references to the #generate element
-var generateBtn = document.querySelector("#generate");
+// Start working code
+// User input variables: 
+var enter;
+var confirmNumber;
+var confirmCharacter;
+var confirmUppercase;
+var confirmLowercase;
+// Start Password variable values: 
+// Special characters 
+character = ["!", "#", "$", "%", "&", "'", "(", ")", "*", "+", ",", "-", ".", "/", "\:", "\;", "<", "=", ">", "?", "@", "[", "\\", "]", "^", "_", "`", "{", "|", "}", "~"];
+// Numeric characters
+number = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+// Alphabetical characters
+alpha = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+// Space is for the Uppercase conversion
+space = [];
+// Choices declared outside the if statement so they can be concatenated upon condition
+var choices;
+// converts letters to uppercase 
+var toUpper = function (x) {
+    return x.toUpperCase();
+};
+// creates a variable for uppercase conversion
+alpha2 = alpha.map(toUpper);
 
-// Special characters for the function created
-const specialCharacters = "!@#$%^&*()";
-// Write password to the #password input
-function writePassword() {
-  var password = generatePassword();
-  var passwordText = document.querySelector("#password");
+var get = document.querySelector("#generate");
 
-  passwordText.value = password;
+get.addEventListener("click", function () {
+    ps = generatePassword();
+    document.getElementById("password").placeholder = ps;
+});
 
-}
-
-// Prompts that come up after you click generate password
+// Start function to generate password
 function generatePassword() {
-  var passwordLength = prompt("Please enter the number of characters you want for you new password.  It must be more than 8 but less than 128.");
+    // Asks for user input
+    enter = parseInt(prompt("How many characters would you like your password? Choose between 8 and 128"));
+    // First if statement for user validation 
+    if (!enter) {
+        alert("You must choose a numeric value between 8 and 128");
+    } else if (enter < 8 || enter > 128) {
+        // Validates user input
+        // Start user input prompts
+        enter = parseInt(prompt("You must choose between 8 and 128"));
 
-  var numbers = confirm("Do you want numbers in your password?");
+    } else {
+        // Continues once user input is validated
+        confirmNumber = confirm("Will this contain numbers?");
+        confirmCharacter = confirm("Will this contain special characters?");
+        confirmUppercase = confirm("Will this contain Uppercase letters?");
+        confirmLowercase = confirm("Will this contain Lowercase letters?");
+    };
 
-  var lowerCases = confirm("Do you want lowercases in your password?");
+    // Else if for 4 negative options
+    if (!confirmCharacter && !confirmNumber && !confirmUppercase && !confirmLowercase) {
+        choices = alert("You must choose a criteria!");
 
-  var upperCases = confirm("Do you want uppercases in your password?");
+    }
+    // First if statement that uses user input prompts to determine choices
+    // Else if for 4 positive options
+    else if (confirmCharacter && confirmNumber && confirmUppercase && confirmLowercase) {
 
-  var special = confirm("Do you want special characters in your password?");
-
-  // this is a minimum count for numbers, lowerCases, upperCases & specialCharacters
-  var minimumCount = 0;
-
-
-  // Empty minimums for numbers, lowerCases, upperCases & specialCharacters
-
-  var minimumNumbers = "";
-  var minimumLowerCases = "";
-  var minimumUpperCases = "";
-  var minimumSpecialCharacters = "";
-
-
-  // Generator functions
-   // Generator functions**
-   var functionArray = {
-    getNumbers: function() {
-      return String.fromCharCode(Math.floor(Math.random() * 10 + 48));
-    },
-
-    getLowerCases: function() {
-      return String.fromCharCode(Math.floor(Math.random() * 26 + 97));
-    },
-
-    getUpperCases: function() {
-      return String.fromCharCode(Math.floor(Math.random() * 26 + 65));
-    },
-
-    getSpecialCharacters: function() {
-      return specialCharacters[Math.floor(Math.random() * specialCharacters.length)]
+        choices = character.concat(number, alpha, alpha2);
     }
 
-};    
-  // Checks to make sure user selected ok for all and uses empty minimums from above
+    else if (confirmCharacter && confirmNumber && confirmUppercase) {
+        choices = character.concat(number, alpha2);
+    }
+    else if (confirmCharacter && confirmNumber && confirmLowercase) {
+        choices = character.concat(number, alpha);
+    }
+    else if (confirmCharacter && confirmLowercase && confirmUppercase) {
+        choices = character.concat(alpha, alpha2);
+    }
+    else if (confirmNumber && confirmLowercase && confirmUppercase) {
+        choices = number.concat(alpha, alpha2);
+    }
 
-  if (numbers === true) {
-    minimumNumbers = functionArray.getNumbers();
-    minimumCount++;
+    else if (confirmCharacter && confirmNumber) {
+        choices = character.concat(number);
 
-  }
+    } else if (confirmCharacter && confirmLowercase) {
+        choices = character.concat(alpha);
 
-  if (lowerCases === true) {
-    minimumLowerCases = functionArray.getLowerCases();
-    minimumCount++;
+    } else if (confirmCharacter && confirmUppercase) {
+        choices = character.concat(alpha2);
+    }
+    else if (confirmLowercase && confirmNumber) {
+        choices = alpha.concat(number);
 
-  }
+    } else if (confirmLowercase && confirmUppercase) {
+        choices = alpha.concat(alpha2);
 
-  if (upperCases === true) {
-    minimumUpperCases = functionArray.getUpperCases();
-    minimumCount++;
+    } else if (confirmNumber && confirmUppercase) {
+        choices = number.concat(alpha2);
+    }
 
-  }
+    else if (confirmCharacter) {
+        choices = character;
+    }
+    else if (confirmNumber) {
+        choices = number;
+    }
+    else if (confirmLowercase) {
+        choices = alpha;
+    }
+    // Created space variable to fill uppercase conversion
+    else if (confirmUppercase) {
+        choices = space.concat(alpha2);
+    };
 
-  if (special === true) {
-    minimumSpecialCharacters = functionArray.getSpecialCharacters();
-    minimumCount++;
+    // password variable is an array placeholder for user generated amount of length
+    var password = [];
 
-  }
-
-  // empty string variable for the for loop below
-  var randomPasswordGenerated = "";
-
-  // loop getting random characters
-  for (let i = 0; i < (parseInt(passwordLength) - minimumCount); i++) {
-    var randomNumberPicked = Math.floor(Math.random() * 4);
-
-    randomPasswordGenerated += randomNumberPicked;
-
-  }
-
-  // to make sure characters are added to the password
-  randomPasswordGenerated += minimumNumbers;
-  randomPasswordGenerated += minimumLowerCases;
-  randomPasswordGenerated += minimumUpperCases;
-  randomPasswordGenerated += minimumSpecialCharacters;
-
-
-  return randomPasswordGenerated;
+    // Start random selection variables:
+    // Random selection for all variables: 
+    for (var i = 0; i < enter; i++) {
+        var pickChoices = choices[Math.floor(Math.random() * choices.length)];
+        password.push(pickChoices);
+    }
+    // This joins the password array and converts it to a string
+    // Worked with a tutor to incorporate this option
+    var ps = password.join("");
+    UserInput(ps);
+    return ps;
+}
+// This puts the password value into the textbox
+// Changed function input to use textcontent
+function UserInput(ps) {
+    document.getElementById("password").textContent = ps;
 
 }
-// Add event listener to generate button
-generateBtn.addEventListener("click", writePassword);
+
+var copy = document.querySelector("#copy");
+copy.addEventListener("click", function () {
+    copyPassword();
+});
+// This copies the password value - works
+// Code example demonstrated in a youtube video: 
+// Source: https://youtu.be/9sT03jEwcaw
+function copyPassword() {
+    document.getElementById("password").select();
+    document.execCommand("Copy");
+    alert("Password copied to clipboard!");
+}
